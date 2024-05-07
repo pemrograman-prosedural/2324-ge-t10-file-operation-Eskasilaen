@@ -2,15 +2,11 @@
 // 12S23024 - Eska Natasia Silaen
 
 #include <stdio.h>
-#include "./libs/dorm.h"
-#include "./libs/student.h"
-#include "./libs/repository.h"
-
-#define MAX_STUDENTS 100
-#define MAX_DORMS 100
+#include <stdlib.h>
+#include <string.h>
 
 typedef struct {
-    char id[10];
+    char id[20];
     char name[50];
     int year;
     char gender[10];
@@ -21,45 +17,59 @@ typedef struct {
     char name[50];
     int capacity;
     char gender[10];
-    int occupancy;
+    int current;
 } Dorm;
 
-void saveStudentData(Student* students, int studentCount) {
-    FILE* file = fopen("./storage/student-repository.txt", "w");
-    if (file == NULL) {
-        printf("Error: Could not open student repository file for writing.\n");
-        exit(EXIT_FAILURE);
-    }
+void read_data(Dorm dorms[], Student students[]) {
+ 
+}
 
-    for(int i = 0; i < studentCount; i++) {
+void print_dorms(Dorm dorms[]) {
+ 
+}
+
+void print_students(Student students[]) {
+
+}
+
+void save_students(Student students[]) {
+    FILE *file = fopen("./storage/student-repository.txt", "w");
+    int i = 0;
+    while (students[i].name[0] != '\0') {
         fprintf(file, "%s|%s|%d|%s|%s\n", students[i].id, students[i].name, students[i].year, students[i].gender, students[i].status);
+        i++;
     }
-
     fclose(file);
 }
 
-void saveDormData(Dorm* dorms, int dormCount) {
-    FILE* file = fopen("./storage/dorm-repository.txt", "w");
-    if (file == NULL) {
-        printf("Error: Could not open dorm repository file for writing.\n");
-        exit(EXIT_FAILURE);
+void save_dorms(Dorm dorms[]) {
+    FILE *file = fopen("./storage/dorm-repository.txt", "w");
+    int i = 0;
+    while (dorms[i].name[0] != '\0') {
+        fprintf(file, "%s|%d|%s|%d\n", dorms[i].name, dorms[i].capacity, dorms[i].gender, dorms[i].current);
+        i++;
     }
-
-    for(int i = 0; i < dormCount; i++) {
-        fprintf(file, "%s|%d|%s|%d\n", dorms[i].name, dorms[i].capacity, dorms[i].gender, dorms[i].occupancy);
-    }
-
     fclose(file);
 }
 
 int main() {
-    Student students[MAX_STUDENTS];
-    Dorm dorms[MAX_DORMS];
-    int studentCount = 0;
-    int dormCount = 0;
+    Dorm dorms[100] = {0};
+    Student students[100] = {0};
 
-    saveStudentData(students, studentCount);
-    saveDormData(dorms, dormCount);
+    read_data(dorms, students);
+
+    char command[50];
+    while (scanf("%s", command) != EOF) {
+        if (strcmp(command, "dorm-print-all-detail") == 0) {
+            print_dorms(dorms);
+        } else if (strcmp(command, "student-print-all-detail") == 0) {
+            print_students(students);
+        } else if (strcmp(command, "---") == 0) {
+            save_students(students);
+            save_dorms(dorms);
+            break;
+        }
+    }
 
     return 0;
 }

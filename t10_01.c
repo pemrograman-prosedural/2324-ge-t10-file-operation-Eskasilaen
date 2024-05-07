@@ -3,59 +3,48 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h> 
+#include <string.h>
+#include "dorm.h"
+#include "student.h"
 
-typedef struct {
-    char id[20];
-    char name[50];
-    int year;
-    char gender[10];
-    char status[20];
-} Student;
-
-typedef struct {
-    char name[50];
-    int capacity;
-    char gender[10];
-    int current;
-} Dorm;
-
-void read_data(Dorm dorms[], Student students[]) {
-    // ... (sama seperti sebelumnya)
-}
-
-void print_dorms(Dorm dorms[]) {
-    int i = 0;
-    while (dorms[i].name[0] != '\0') {
-        printf("%s|%d|%s|%d\n", dorms[i].name, dorms[i].capacity, dorms[i].gender, dorms[i].current);
-        i++;
-    }
-}
-
-void print_students(Student students[]) {
-    int i = 0;
-    while (students[i].name[0] != '\0') {
-        printf("%s|%s|%d|%s|%s\n", students[i].id, students[i].name, students[i].year, students[i].gender, students[i].status);
-        i++;
-    }
-}
+#define MAX_DORMS 100
+#define MAX_STUDENTS 100
 
 int main() {
-    Dorm dorms[100] = {0};
-    Student students[100] = {0};
+    // Membuka file asrama dan mahasiswa untuk dibaca
+    FILE *dorm_file = fopen("./storage/dorm-repository.txt", "r");
+    FILE *student_file = fopen("./storage/student-repository.txt", "r");
 
-    read_data(dorms, students);
-
-    char command[50];
-    while (scanf("%s", command) != EOF) {
-        if (strcmp(command, "dorm-print-all-detail") == 0) {
-            print_dorms(dorms);
-        } else if (strcmp(command, "student-print-all-detail") == 0) {
-            print_students(students);
-        } else if (strcmp(command, "---") == 0) {
-            break;
-        }
+    // Memeriksa apakah file berhasil dibuka
+    if (dorm_file == NULL || student_file == NULL) {
+        perror("Error opening file");
+        return EXIT_FAILURE;
     }
 
-    return 0;
+    // Inisialisasi array untuk menyimpan data asrama dan mahasiswa
+    struct dorm_t dorms[MAX_DORMS];
+    struct student_t students[MAX_STUDENTS];
+    int num_dorms = 0;
+    int num_students = 0;
+
+    // Membaca data asrama dari file
+    char line[100];
+    while (fgets(line, sizeof(line), dorm_file)) {
+        // Mengisi array dorms dengan data dari file
+        dorms[num_dorms] = create_dorm_repository(line);
+        num_dorms++;
+    }
+
+    // Membaca data mahasiswa dari file
+    while (fgets(line, sizeof(line), student_file)) {
+        // Mengisi array students dengan data dari file
+        students[num_students] = create_student_repository(line);
+        num_students++;
+    }
+
+    // Menutup file setelah selesai membaca
+    fclose(dorm_file);
+    fclose(student_file);
+
+    return EXIT_SUCCESS;
 }
