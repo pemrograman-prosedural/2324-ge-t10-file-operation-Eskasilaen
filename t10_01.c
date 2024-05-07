@@ -2,30 +2,61 @@
 // 12S23024 - Eska Natasia Silaen
 
 #include <stdio.h>
-#include "./libs/dorm.h"
-#include "./libs/student.h"
-#include "./libs/repository.h"
+#include <stdlib.h>
 
-#define MAX_DORMS 100
-#define MAX_STUDENTS 1000
+typedef struct {
+    char id[20];
+    char name[50];
+    int year;
+    char gender[10];
+    char status[20];
+} Student;
 
-int main() {
-    Dorm dorms[MAX_DORMS];
-    int num_dorms = 0;
-    load_dorms(dorms, &num_dorms, "/storage/dorm-repository.txt");
+typedef struct {
+    char name[50];
+    int capacity;
+    char gender[10];
+    int current;
+} Dorm;
 
-    Student students[MAX_STUDENTS];
-    int num_students = 0;
-    load_students(students, &num_students, "/storage/student-repository.txt");
+void read_data(Dorm dorms[], Student students[]) {
+    FILE *dorm_file = fopen("./storage/dorm-repository.txt", "r");
+    FILE *student_file = fopen("./storage/student-repository.txt", "r");
+    int i = 0;
 
-    char command[50];
-    scanf("%s", command);
-
-    if (strcmp(command, "dorm-print-all-detail") == 0) {
-        dorm_print_all_detail(dorms, num_dorms);
-    } else if (strcmp(command, "student-print-all-detail") == 0) {
-        student_print_all_detail(students, num_students);
+    while (fscanf(dorm_file, "%[^#]#%d#%[^#]#%d\n", dorms[i].name, &dorms[i].capacity, dorms[i].gender, &dorms[i].current) != EOF) {
+        i++;
     }
 
-    return 0;  
+    i = 0;
+    while (fscanf(student_file, "%[^#]#%[^#]#%d#%[^#]#%[^#]\n", students[i].id, students[i].name, &students[i].year, students[i].gender, students[i].status) != EOF) {
+        i++;
+    }
+
+    fclose(dorm_file);
+    fclose(student_file);
+}
+
+void print_all(Dorm dorms[], Student students[]) {
+    int i = 0;
+    while (dorms[i].name[0] != '\0') {
+        printf("%s|%d|%s|%d\n", dorms[i].name, dorms[i].capacity, dorms[i].gender, dorms[i].current);
+        i++;
+    }
+
+    i = 0;
+    while (students[i].name[0] != '\0') {
+        printf("%s|%s|%d|%s|%s\n", students[i].id, students[i].name, students[i].year, students[i].gender, students[i].status);
+        i++;
+    }
+}
+
+int main() {
+    Dorm dorms[100] = {0};
+    Student students[100] = {0};
+
+    read_data(dorms, students);
+    print_all(dorms, students);
+
+    return 0;
 }
