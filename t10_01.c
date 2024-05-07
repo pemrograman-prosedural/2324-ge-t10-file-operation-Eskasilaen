@@ -4,7 +4,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "dorm.h"
+#include "headers/dorm.h"
 #include "student.h"
 
 #define MAX_DORMS 100
