@@ -3,6 +3,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 typedef struct {
     char id[20];
@@ -20,31 +21,19 @@ typedef struct {
 } Dorm;
 
 void read_data(Dorm dorms[], Student students[]) {
-    FILE *dorm_file = fopen("./storage/dorm-repository.txt", "r");
-    FILE *student_file = fopen("./storage/student-repository.txt", "r");
-    int i = 0;
-
-    while (fscanf(dorm_file, "%[^#]#%d#%[^#]#%d\n", dorms[i].name, &dorms[i].capacity, dorms[i].gender, &dorms[i].current) != EOF) {
-        i++;
-    }
-
-    i = 0;
-    while (fscanf(student_file, "%[^#]#%[^#]#%d#%[^#]#%[^#]\n", students[i].id, students[i].name, &students[i].year, students[i].gender, students[i].status) != EOF) {
-        i++;
-    }
-
-    fclose(dorm_file);
-    fclose(student_file);
+    // ... (sama seperti sebelumnya)
 }
 
-void print_all(Dorm dorms[], Student students[]) {
+void print_dorms(Dorm dorms[]) {
     int i = 0;
     while (dorms[i].name[0] != '\0') {
         printf("%s|%d|%s|%d\n", dorms[i].name, dorms[i].capacity, dorms[i].gender, dorms[i].current);
         i++;
     }
+}
 
-    i = 0;
+void print_students(Student students[]) {
+    int i = 0;
     while (students[i].name[0] != '\0') {
         printf("%s|%s|%d|%s|%s\n", students[i].id, students[i].name, students[i].year, students[i].gender, students[i].status);
         i++;
@@ -56,7 +45,17 @@ int main() {
     Student students[100] = {0};
 
     read_data(dorms, students);
-    print_all(dorms, students);
+
+    char command[50];
+    while (scanf("%s", command) != EOF) {
+        if (strcmp(command, "dorm-print-all-detail") == 0) {
+            print_dorms(dorms);
+        } else if (strcmp(command, "student-print-all-detail") == 0) {
+            print_students(students);
+        } else if (strcmp(command, "---") == 0) {
+            break;
+        }
+    }
 
     return 0;
 }
